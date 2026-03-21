@@ -5,13 +5,14 @@ int string2num(char *s, int base)
 {
 
   int a = 0;
-
   for (; *s; s++)
 
     if (isdigit(*s))
     {
       a = a * base + (*s - '0');
-    }else{
+    }
+    else
+    {
       a = a * base + (*s - 'a' + 10);
     }
 
