@@ -7,7 +7,8 @@ int main (void) {
     if(*pc == 123 || *pc == 125 ){
         *pc++;
     }
-    printf ("%c", *pc++);
+    printf ("%c", *pc);
+    pc++;
   }
   printf("\n");
 
@@ -44,24 +45,22 @@ INICIO_WHILE:
   cmpb $123, (%r12)
   je DEPOIS_IF
 
-
   cmpb $125, (%r12)
   je DEPOIS_IF
+
 /*************************************************************/
 /* este trecho imprime o valor de %eax (estraga %eax)  */
   movq    $Sf, %rdi    /* primeiro parametro (ponteiro)*/
   movl    %eax, %esi   /* segundo parametro  (inteiro) */
-  movl  $0, %eax
-  call  printf       /* chama a funcao da biblioteca */
+  movl    $0, %eax
+  call    printf       /* chama a funcao da biblioteca */
 /*************************************************************/
+
+
 DEPOIS_IF:
+
   addq  $1, %r12  /* r12 += 1; */
-  jmp  INICIO_WHILE         /* goto L1; */
-
-
-
-
-
+  jmp  INICIO_WHILE         /* goto INICIO_WHILE; */
 
 
 
