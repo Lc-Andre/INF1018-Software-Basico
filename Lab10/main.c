@@ -21,6 +21,6 @@ int main (void) {
   x[0].next = &(x[MAX-1]);
   x[1].next = NULL;
 
-  printf ("resultado de add: %d\n", add2(x));
+  printf ("resultado de add2: %d\n", add2(x));
   return 0;
 }
