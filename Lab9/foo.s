@@ -30,7 +30,6 @@ imul $4, %ecx
 movslq %ecx, %rcx
 addq %r12, %rcx
 
-
 addl (%rcx), %eax /*s += a[i]*/
 
 cmpl $0, (%rcx) /*if( a[i] == 0)*/
