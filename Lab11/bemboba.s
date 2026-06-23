@@ -4,7 +4,7 @@ bemboba:
 
     pushq %rbp
     movq  %rsp, %rbp
-    subq  $32, %rsp
+    subq  $16, %rsp
 
     # salva rbx
     movq  %rbx, -24(%rbp)
