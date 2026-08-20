@@ -5,20 +5,17 @@
 int odd_ones(unsigned int x)
 {
 
-  unsigned char *p = (unsigned char *)&x;
   int total = 0;
 
-  for (int i = 0; i < sizeof x; i++)
-  {
-    unsigned char byte = *(p + i);
+  for(int i = 0; i < 32; i++){
 
-    for (int j = 0; j < 8; j++)
-    {
-      if (byte & (1 << j))
-      {
-        total++;
-      }
+
+    if( x & 1){
+      total++;
     }
+    
+    x = x >> 1;
+
   }
 
   return total & 1;

@@ -18,9 +18,9 @@ int string2num (char *s, int n) {
   return a;
 }
 int main (void) {
-//   printf("==> %d\n", string2num("1234"));
-//   printf("==> %d\n", string2num("1234") + 1);
-//   printf("==> %d\n", string2num("1234") + string2num("1"));
+  // printf("==> %d\n", string2num("1234"));
+  // printf("==> %d\n", string2num("1234") + 1);
+  // printf("==> %d\n", string2num("1234") + string2num("1"));
 
 
   printf("%d\n", string2num("777", 8));
