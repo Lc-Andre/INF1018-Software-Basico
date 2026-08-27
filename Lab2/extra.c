@@ -2,15 +2,12 @@
 #include <ctype.h>
 
 int is_little(void){
-    unsigned int n = 0x01020304;
+
+    unsigned int a = 0x01020304;
+
     
-    char *p = (char*) &n;
-    
-    if(*p){
-        return 1;
-    }else{
-        return 0;
-    }
+
+
 }
 
 
