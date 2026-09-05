@@ -4,22 +4,16 @@
 
 typedef unsigned packed_t;
 
-/* extrai byte indicado e retorna valor inteiro correspondente (32 bits) com sinal */
-int xbyte(packed_t word, int bytenum);
-
-int string2num(char *s, int base)
-{
+int string2num (char *s, int base) {
   int a = 0;
-  for (; *s; s++)
-  {
-    if (isdigit(*s))
-      a = a * base + (*s - '0');
-    else if ((*s >= 'A') && (*s < (base - 10 + 'A')))
-      a = a * base + ((*s - 'A') + 10);
-    else if ((*s >= 'a') && (*s < (base - 10 + 'a')))
-      a = a * base + ((*s - 'a') + 10);
-    else
-    {
+  for (; *s; s++) {
+    if(isdigit(*s))
+      a = a*base + (*s - '0');
+    else if((*s >= 'A') && (*s < (base-10+'A')))
+      a = a*base + ((*s - 'A') + 10);
+    else if((*s >= 'a') && (*s < (base-10+'a')))
+      a = a*base + ((*s - 'a') + 10);
+    else {
       printf("pane: numero invalido! \n");
       exit(1);
     }
@@ -27,22 +21,28 @@ int string2num(char *s, int base)
   return a;
 }
 
-int xbyte(packed_t word, int bytenum)
-{
-  int byte = (word >> (bytenum * 8)) & 0xFF;
-  return (byte << 24) >> 24;
+int xbyte (packed_t word, int bytenum) {
+  /* implementar!!! */
+  
+  int res;
+  res = word >> (bytenum * 8) & 0x000000FF;
+
+  if(res & (1 << 7)){
+    res = res | 0xFFFFFF00;
+  }
+
+  return res;
 }
 
-int main(int argc, char **argv)
-{
+int main (int argc, char **argv) {
   int x;
-  if (argc != 3)
-  {
-    printf("uso: %s <word (em hexadecimal)> <bytenum>\n", argv[0]);
+  if (argc != 3) {
+    printf ("uso: %s <word (em hexadecimal)> <bytenum>\n", argv[0]);
     exit(1);
   }
 
   x = xbyte(string2num(argv[1], 16), atoi(argv[2]));
-  printf("%08x  %d\n", x, x);
+  printf ("%08x  %d\n", x, x);
+
   return 0;
 }

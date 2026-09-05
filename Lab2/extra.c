@@ -5,7 +5,11 @@ int is_little(void){
 
     unsigned int a = 0x01020304;
 
-    
+    for(int i = 0; i < sizeof a; i++){
+
+        printf()
+
+    }
 
 
 }
