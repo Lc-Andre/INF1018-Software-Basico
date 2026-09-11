@@ -4,11 +4,12 @@
 int is_little(void){
 
     unsigned int a = 0x01020304;
-
-    for(int i = 0; i < sizeof a; i++){
-
-        printf()
-
+    unsigned char *p = (unsigned char*)&a;
+    
+    if(p[0] == (a & 0x000000FF)){
+        return 1;
+    }else{
+        return 0;
     }
 
 
