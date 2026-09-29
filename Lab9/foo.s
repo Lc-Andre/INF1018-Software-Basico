@@ -1,55 +1,57 @@
+/*
+void foo (int a[], int n) {
+  int i;
+  int s = 0;
+  for (i=0; i<n; i++) {
+    s += a[i];
+    if (a[i] == 0) {
+      a[i] = s;
+      s = 0;
+    }
+  }
+}*/
+
 .text
 .globl foo
 foo:
 
-pushq %rbp              /*base do RA da chamadora*/
-movq %rsp, %rbp         /*base do RA da chamada*/
-subq $16, %rsp          /*espaco no RA da chamada*/
-movq  %rbx, -8(%rbp)
-movq  %r12, -16(%rbp)
-
-/*
-Dicionário
-Reg     Var
-ebx     i
-eax     s
+/*Dcionario
+a rdi
+n esi
+i ecx
+s r8d
 */
 
-movl $0, %ebx
-movl $0, %eax
+pushq %rbp
+movq %rsp, %rbp
 
-movq %rdi, %r12
+movl $0, %ecx /* i = 0 */
+movl $0, %r8d /* s = 0 */
 
 inicio_for:
-cmpl %esi, %ebx
+
+cmpl %esi, %ecx /* i < n*/
 jge fim_for
 
-/*calculando end*/
-movl %ebx, %ecx /* copiando i para ecx*/
-imul $4, %ecx
-movslq %ecx, %rcx
-addq %r12, %rcx
+/*calculo de endereco*/
 
-addl (%rcx), %eax /*s += a[i]*/
+movslq %ecx, %rdx
+imulq $4, %rdx
+addq %rdi, %rdx /*rdx = &a[i]*/
 
-cmpl $0, (%rcx) /*if( a[i] == 0)*/
-jne continua
+addl (%rdx),%r8d /* s+= a[i]*/
 
-/* a[i] = s */
-movl %eax, (%rcx)
+cmpl $0, (%rdx)
+jne fora_if
 
-/* s = 0 */
-movl $0, %eax
+movl %r8d, (%rdx) /*a[i] = s*/
+movl $0, %r8d /*s = 0*/
 
-continua:
-addl $1, %ebx
+fora_if:
+incl %ecx
 jmp inicio_for
 
-
 fim_for:
-
-movq -8(%rbp), %rbx
-movq -16(%rbp), %r12
-
 leave
 ret
+
