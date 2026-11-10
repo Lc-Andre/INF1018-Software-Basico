@@ -1,49 +1,45 @@
+/*
+double foo2 (float a, float b) {
+  return sin(a) + cos(b);
+}
+*/
+
 .text
 .globl foo2
 foo2:
 
 pushq %rbp
-movq  %rsp, %rbp
-subq  $16, %rsp
+movq %rsp, %rbp
+subq $16, %rsp
 
-/*
-Dicionário
-Reg     Var
-xmm0    a / resultado
-xmm1    b
-
-RA
--8(%rbp)   b (float)
--16(%rbp)  resultado de sin(a) (double)
+/*Dicionário
+a xmm0
+b xmm1
 */
 
-# Salva b
+/*salvando caller-saved*/
+
+movss %xmm0, -4(%rbp)
 movss %xmm1, -8(%rbp)
 
-# -------- sin(a) --------
-
-# float -> double
-cvtss2sd %xmm0, %xmm0
-
+cvtss2sd %xmm0, %xmm0 /*double a*/
 call sin
 
-# Guarda sin(a)
-movsd %xmm0, -16(%rbp)
+movsd %xmm0, -16(%rbp) /*resultado esta aqui*/
 
-# -------- cos(b) --------
+/*restaurando caller-saved*/
+movss -4(%rbp), %xmm0
+movss -8(%rbp), %xmm1 
 
-# Recupera b
-movss -8(%rbp), %xmm0
 
-# float -> double
-cvtss2sd %xmm0, %xmm0
-
+cvtss2sd %xmm1, %xmm0 /*double b*/
 call cos
 
-# -------- soma --------
-
-# xmm0 = cos(b) + sin(a)
 addsd -16(%rbp), %xmm0
 
 leave
 ret
+
+
+
+
