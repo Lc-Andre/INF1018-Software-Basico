@@ -4,72 +4,70 @@ bar:
 
 pushq %rbp
 movq %rsp, %rbp
-subq $128, %rsp
-
+subq $160, %rsp
+/*salvando callee-saved*/
 movq %rbx, -8(%rbp)
-movsd %xmm0, -120(%rbp)    /* salva ent, já que xmm0 vai ser reaproveitado */
+movq %r12, -16(%rbp)
+movq %r13, -24(%rbp)
+movq %r14, -32(%rbp)
+movq %r15, -48(%rbp)
+movsd %xmm0, -64(%rbp)
 
 /*Dicionario
-Reg     Var
-xmm0    ent
-rdi     sai
-esi     n
-xmm1    r
-r8      p
-ecx     i
-rbx     paux
+ent     -64(%rbp)
+sai     r13
+n       r12d
+i       ebx
+p       r14
+v       r15
+r       -68(%rbp)
 */
 
-movl    $0, %eax
-cvtsi2ss %eax, %xmm1 /* r = 0*/
-movq  %rdi, %r8 /* p = sai*/
-movl $0, %ecx /* i = 0*/
-leaq    -88(%rbp), %rbx /*inicio do vetor*/
+movq %rdi, %r13
+movl %esi, %r12d
+movl $0, -68(%rbp) /*r = 0.0*/
+movq %r13, %r14 /* p = sai */
+movl $0, %ebx /*i = 0*/
+leaq -152(%rbp), %r15 /* v = &v[0] */
 
 inicio_for:
-cmpl %esi, %ecx
-jge fim_for
+cmpl %r12d, %ebx /* i < n*/
+jge sai_fora
 
-movl    $0, %eax
-cvtsi2ss %eax, %xmm0
+/* if (*p < 0) *p = 0; */
+movl $0, %eax
+cvtsi2ss %eax, %xmm1 /* xmm1 = 0.0 */
+movss (%r14), %xmm2 /* xmm2 = *p */
+ucomiss %xmm1, %xmm2 /* compara *p com 0.0 */
+jae sai_fora_if
+movl $0, (%r14) /* *p = 0 */
+sai_fora_if:
 
-movss (%r8), %xmm2 
-ucomiss %xmm0, %xmm2 /* (*p < 0) */
-jae depois_if
-movss %xmm0, (%r8) /* *p = 0*/
+/*Calculo v[i]*/
+movslq %ebx, %rax
+imulq $16, %rax
+addq %r15, %rax /* rax = &v[i]*/
 
-depois_if:
-/*Calculo de v[i]*/
-movslq  %ecx, %rax         /* rax = i */
-imul    $16, %rax            /* rax = i * 16  */
-addq    %rbx, %rax          /* rax = &v[0] + i*16 = &v[i] */
-movl    8(%rax), %edi       /* edi = v[i].i e tambem aproveitando para passar como arg de foo*/
+movl 8(%rax), %edi /* v[i].i */
+movsd -64(%rbp), %xmm0 /* ent */
+call foo
 
+addss -68(%rbp), %xmm0 /* r += foo(...) */
+movss %xmm0, -68(%rbp)
 
-/*salvar registradores caller-saved antes da chamada de foo*/
-movss %xmm1, -96(%rbp)     /* salva r */
-movq  %r8, -104(%rbp)      /* salva p */
-movl  %ecx, -112(%rbp)     /* salva i */
-
-movsd -120(%rbp), %xmm0    /* recarrega ent (2o argumento de foo) */
-call  foo
-
-/* r += foo(...) */
-movss -96(%rbp), %xmm2     /* xmm2 = r antigo */
-addss %xmm2, %xmm0         /* xmm0 = foo(...) + r */
-movss %xmm0, %xmm1         /* r = xmm0 aqui seria o novo r*/
-
-movq  -104(%rbp), %r8      /* restaura p */
-movl  -112(%rbp), %ecx     /* restaura i */
-
-addq $4, %r8                /* p++ */
-addl $1, %ecx                /* i++ */
+addq $4, %r14 /* p++ */
+incl %ebx /* i++ */
 jmp inicio_for
 
+sai_fora:
 
-fim_for:
-movss %xmm1, %xmm0          /* return r (valor de retorno em xmm0) */
+movss -68(%rbp), %xmm0 /* return r */
 
-movq -8(%rbp), %rbx          /* restaura rbx */
+movq -8(%rbp),%rbx 
+movq -16(%rbp), %r12
+movq -24(%rbp), %r13 
+movq -32(%rbp), %r14 
+movq -48(%rbp), %r15 
+
 leave
 ret
